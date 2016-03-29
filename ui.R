@@ -16,13 +16,13 @@ shinyUI(fluidPage(
   column(2,
         h4("Population dynamic processes"),
         sliderInput("nyears", "Number of years:", value=20, min=0, max=100, step=1),
-        sliderInput("AgeMax", "Age classes:", value=20, min=0, max=100, step=1), 
-        sliderInput("linf", "Linf:", value=70, min=0, max=200, step=1),
-        sliderInput("vbk", "k:", value = 0.15, min=0, max=1, step=0.05),
-        sliderInput("t0", "t0:", value = -1e-3, min=-1, max=-1e-3, step=0.01),
-        sliderInput("M", "M:", value=0.35, min=0, max=1, step=0.05),
-        sliderInput("S50", "S50:", value=30, min=0, max=200, step=1),
-        sliderInput("M50", "M50:", value=30, min=0, max=200, step=1)
+        sliderInput("AgeMax", "Age classes:", value=14, min=0, max=100, step=1), 
+        sliderInput("linf", "Linf:", value=37, min=0, max=200, step=1),
+        sliderInput("vbk", "k:", value = 0.2, min=0, max=1, step=0.05),
+        sliderInput("t0", "t0:", value = -0.2, min=-1, max=-1e-3, step=0.01),
+        sliderInput("M", "M:", value=0.36, min=0, max=1, step=0.01),
+        sliderInput("S50", "S50:", value=8, min=0, max=200, step=1),
+        sliderInput("M50", "M50:", value=4, min=0, max=200, step=1)
       ),
     column(10,
       sidebarLayout(
@@ -39,7 +39,7 @@ shinyUI(fluidPage(
         mainPanel(
           tabsetPanel(
             tabPanel("Length frequency",
-                     plotOutput("LFplot"),
+                     #plotOutput("LFplot"),
                      plotOutput("LFlegend")
             ),
             tabPanel("Time Series",
@@ -47,7 +47,8 @@ shinyUI(fluidPage(
                      column(6, plotOutput("Fplot")),
                      column(6, plotOutput("Rplot")),
                      h4("Observed"),
-                     plotOutput("MLplot")
+                     column(6, plotOutput("MLplot")),
+                     column(6, plotOutput("LFplot"))
             )
             
           )

@@ -35,7 +35,7 @@ SimData <- function(Nyears, AgeMax, SigmaR, M, F1, S_a,
 	if(Fdynamics=="Ramp") Framp_t <- c(rep(0.01, nburn), "rampup"=seq(F1, Fmax, length=floor(Nyears/2)), 
 		"peak"=rep(Fmax, floor((Nyears-floor(Nyears/2))/2)), 
 		"managed"=rep(Fmax/3, Nyears-floor(Nyears/2)-floor((Nyears-floor(Nyears/2))/2)))
-	if(Fdynamics=="Constant") Fconstant_t <- rep(Fequil, tyears)
+	if(Fdynamics=="Constant") Fconstant_t <- c(rep(0.01, nburn),rep(Fequil, Nyears))
 	if(Fdynamics=="Increasing") Finc_t <- c(rep(0, nburn), ((1-0.01)/(Nyears-1))*1:Nyears)
 
 	if(Rdynamics=="Pulsed") Rpulse_t <- c(rep(R0, nburn), "initial"=rep(R0, floor(Nyears/3)),

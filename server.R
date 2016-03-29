@@ -55,7 +55,8 @@ shinyServer(function(input, output) {
     }
     years <- 1:input$nyears
     plot(years, rL_t, lwd=4, pch=19, type="o", ylim=c(0, max(rL_t)*1.5),
-         ylab="Observed mean length in catch", col=gray(0.2))
+         ylab="Observed mean length in catch", col=gray(0.2), xlab="Year", yaxt="n")
+    axis(2, at=pretty(c(0, max(rL_t)*1.5)), las=2)
     if(input$error==TRUE) lines(rL_t2, lty=2, col=gray(0.2), lwd=2)
   })
   
@@ -64,7 +65,8 @@ shinyServer(function(input, output) {
     if(input$error==TRUE) F_t2 <- get_sim(error=TRUE)$F_t
     years <- 1:input$nyears
     plot(years, F_t, lwd=4, pch=19, type="o", ylim=c(0, 1.5),
-         ylab="True fishing mortality", col="forestgreen")
+         ylab="True fishing mortality", col="forestgreen", xlab="Year", yaxt="n")
+    axis(2, at=pretty(c(0,1.5)), las=2)
     if(input$error==TRUE) lines(F_t2, lty=2, col="forestgreen", lwd=2)
   })
   
@@ -73,7 +75,8 @@ shinyServer(function(input, output) {
     if(input$error==TRUE) R_t2 <- get_sim(error=TRUE)$R_t
     years <- 1:input$nyears
     plot(years, R_t, lwd=4, pch=19, type="o", ylim=c(0, 5000),
-         ylab="True fishing mortality", col="steelblue")
+         ylab="True recruitment", col="steelblue", xlab="Year", yaxt="n")
+    axis(2, at=pretty(c(0,5000)), las=2)
     if(input$error==TRUE) lines(R_t2, lty=2, col="steelblue", lwd=2)
   })
   
