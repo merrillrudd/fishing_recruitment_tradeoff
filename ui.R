@@ -6,7 +6,6 @@
 #
 
 library(shiny)
-source("functions.R")
 
 shinyUI(fluidPage(
 
@@ -39,7 +38,7 @@ shinyUI(fluidPage(
         mainPanel(
           tabsetPanel(
             tabPanel("Length frequency",
-                     #plotOutput("LFplot"),
+                     plotOutput("LFplot"),
                      plotOutput("LFlegend")
             ),
             tabPanel("Time Series",
@@ -47,8 +46,8 @@ shinyUI(fluidPage(
                      column(6, plotOutput("Fplot")),
                      column(6, plotOutput("Rplot")),
                      h4("Observed"),
-                     column(6, plotOutput("MLplot")),
-                     column(6, plotOutput("LFplot"))
+                     column(6, plotOutput("MLplot"))
+                     #column(6, plotOutput("LFplot"))
             )
             
           )
