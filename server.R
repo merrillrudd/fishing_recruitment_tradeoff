@@ -6,6 +6,7 @@
 #
 
 library(shiny)
+library(RandomFields)
 
 shinyServer(function(input, output) {
   
@@ -60,6 +61,7 @@ shinyServer(function(input, output) {
     if(Fdynamics=="Ramp") F_t[1] <- Framp_t[1]
     if(Fdynamics=="Constant") F_t[1] <- Fconstant_t[1]
     if(Fdynamics=="Increasing") F_t[1] <- Finc_t[1]
+    if(Fdynamics=="Unfished") F_t <- rep(0, tyears)
     
     R_t[1] <- R0
     
@@ -211,9 +213,9 @@ shinyServer(function(input, output) {
     
     return(DataList)
   }
+
   
-  
-  get_sim <- function(error){
+  get_sim <- function(error,finput){
     
     Sa50 <- round(input$t0 - log(1-(input$S50/input$linf))/input$vbk)
     Ma50 <- round(input$t0 - log(1-(input$M50/input$linf))/input$vbk)
@@ -240,7 +242,7 @@ shinyServer(function(input, output) {
     simdata <- SimData(Nyears=input$nyears, AgeMax=input$AgeMax, 
                        SigmaR=SigmaR, M=input$M, F1=0.01, S_a=S_a, 
                        SigmaF=SigmaF, W_a=W_a, L_a=L_a, Mat_a=Mat_a, 
-                       Amat=Ma50, Fdynamics=input$f_options, 
+                       Amat=Ma50, Fdynamics=finput, 
                        Rdynamics=input$rec_options, Fequil=0.2, R0=1000,
                        CVlen=0.2, highs=highs, mids=mids, lows=lows)
 
@@ -250,11 +252,11 @@ shinyServer(function(input, output) {
   }
 
   output$MLplot <- renderPlot({
-    pop <- get_sim(error=FALSE)
-    L_t <- get_sim(error=FALSE)$L_t
+    pop <- get_sim(error=FALSE,finput=input$f_options)
+    L_t <- get_sim(error=FALSE,finput=input$f_options)$L_t
     rL_t <- L_t/L_t[1]
     if(input$error==TRUE){
-      L_t2 <- get_sim(error=TRUE)$L_t
+      L_t2 <- get_sim(error=TRUE,finput=input$f_options)$L_t
       rL_t2 <- L_t2/L_t2[1]
     }
     years <- 1:input$nyears
@@ -265,8 +267,8 @@ shinyServer(function(input, output) {
   })
   
   output$Fplot <- renderPlot({
-    F_t <- get_sim(error=FALSE)$F_t
-    if(input$error==TRUE) F_t2 <- get_sim(error=TRUE)$F_t
+    F_t <- get_sim(error=FALSE,finput=input$f_options)$F_t
+    if(input$error==TRUE) F_t2 <- get_sim(error=TRUE,finput=input$f_options)$F_t
     years <- 1:input$nyears
     plot(years, F_t, lwd=4, pch=19, type="o", ylim=c(0, 1.5),
          ylab="True fishing mortality", col="forestgreen", xlab="Year", yaxt="n")
@@ -275,8 +277,8 @@ shinyServer(function(input, output) {
   })
   
   output$Rplot <- renderPlot({
-    R_t <- get_sim(error=FALSE)$R_t
-    if(input$error==TRUE) R_t2 <- get_sim(error=TRUE)$R_t
+    R_t <- get_sim(error=FALSE, finput=input$f_options)$R_t
+    if(input$error==TRUE) R_t2 <- get_sim(error=TRUE, finput=input$f_options)$R_t
     years <- 1:input$nyears
     plot(years, R_t, lwd=4, pch=19, type="o", ylim=c(0, 5000),
          ylab="True recruitment", col="steelblue", xlab="Year", yaxt="n")
@@ -285,16 +287,17 @@ shinyServer(function(input, output) {
   })
   
   output$LFplot <- renderPlot({
-    VL <- get_sim(error=FALSE)$VL
-    relVL1 <- VL[1,]/max(VL[1,])
-    relVL2 <- VL[round(input$nyears)/2,]/max(VL[round(input$nyears)/2,])
+    VL1 <- get_sim(error=FALSE,finput="Unfished")$VL
+    VL2 <- get_sim(error=FALSE,finput=input$f_options)$VL
+    relVL1 <- VL1[round(input$nyears)/2,]/max(VL1[round(input$nyears)/2,])
+    relVL2 <- VL2[round(input$nyears)/2,]/max(VL2[round(input$nyears)/2,])
     
-    plot(x=1, y=1, type="n", xlim=c(0, 90), ylim=c(0, 1), axes=F, xaxs="i", yaxs="i", ann=F)
-    polygon(x=c(seq(0,90,length=length(relVL1)), seq(90, 0, length=length(relVL1))),
-            y=c(rep(0, length(relVL1)), rev(relVL1)), col="#AAAAAA70")
-    polygon(x=c(seq(0,90,length=length(relVL2)), seq(90,0,length=length(relVL2))),
-            y=c(rep(0, length(relVL2)), rev(relVL2)), col="#AA000070")
-    axis(1, at=pretty(c(0,90)))
+    plot(x=1, y=1, type="n", xlim=c(0, 60), ylim=c(0, 1), axes=F, xaxs="i", yaxs="i", ann=F)
+    polygon(x=c(seq(0,length(relVL1),length=60), seq(length(relVL1), 0, length=60)),
+            y=c(rep(0, 60), rev(c(relVL1,rep(0,(60-length(relVL1)))))), col="#AAAAAA70")
+    if(input$f_options!="Unfished")polygon(x=c(seq(0,length(relVL2),length=60), seq(length(relVL2),0,length=60)),
+            y=c(rep(0, 60), rev(c(relVL2,rep(0,(60-length(relVL2)))))), col="#AA000070")
+    axis(1, at=pretty(c(0,60)))
     mtext(side=1, "Length", line=3)
     axis(2, at=pretty(c(0,1)), las=2)
     mtext(side=2, "Relative proportion", line=3)

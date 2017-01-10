@@ -16,7 +16,7 @@ shinyUI(fluidPage(
         h4("Population dynamic processes"),
         sliderInput("nyears", "Number of years:", value=20, min=0, max=100, step=1),
         sliderInput("AgeMax", "Age classes:", value=14, min=0, max=100, step=1), 
-        sliderInput("linf", "Linf:", value=37, min=0, max=200, step=1),
+        sliderInput("linf", "Linf:", value=37, min=0, max=50, step=1),
         sliderInput("vbk", "k:", value = 0.2, min=0, max=1, step=0.05),
         sliderInput("t0", "t0:", value = -0.2, min=-1, max=-1e-3, step=0.01),
         sliderInput("M", "M:", value=0.36, min=0, max=1, step=0.01),
@@ -29,7 +29,7 @@ shinyUI(fluidPage(
           h4("Recruitment dynamics"),
           selectInput("rec_options", "Recruitment pattern", choices=c("Constant", "Pulsed")),
           h4("Fishing dynamics"),
-          selectInput("f_options", "Fishing mortality pattern", choices=c("Constant", "Increasing")),
+          selectInput("f_options", "Fishing mortality pattern", choices=c("Constant", "Increasing","Unfished")),
           conditionalPanel(
             "$('li.active a').first().html()=='Time Series'",
             checkboxInput("error", "Variability?", FALSE)
